@@ -143,7 +143,7 @@ class clientThread(threading.Thread):
             try:
                 msg = parse(sock.recvfrom(1024)[0])
             except Exception as e:
-                print(e)
+                pass
             self.joystick.update(msg)
             self.gui.update()
 

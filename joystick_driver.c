@@ -70,7 +70,7 @@ static void send_netlink_message(struct controller* controller) {
   nlh = nlmsg_put(skb, 0, 1, NLMSG_DONE, msg_size + 1, 0);
   strcpy(nlmsg_data(nlh), msg);
 
-  pr_info("Sending skb.\n");
+ 
   res = nlmsg_multicast(nl_sk, skb, 0, MYGRP, GFP_KERNEL);
 
 }
@@ -82,14 +82,11 @@ void myHandler(struct urb *urb) {
 
   controller.xaxis = buffer[0];
   controller.yaxis = buffer[1];
-  controller.updownaxis = buffer[2];
-  
+  controller.updownaxis = buffer[2];  
   controller.b1 = buffer[3] & 1 << 0 ? 1 : 0;
   controller.b2 = buffer[3] & 1 << 1 ? 1 : 0;
   controller.b3 = buffer[3] & 1 << 2 ? 1 : 0;
   controller.b4 = buffer[3] & 1 << 3 ? 1 : 0;
-
-
 
   send_netlink_message(&controller);
   usb_submit_urb(urb, GFP_ATOMIC);
@@ -111,7 +108,7 @@ static int joystick_probe(struct usb_interface *interface,
   my_interface = interface;
   my_id = id;
 
-  printk(KERN_INFO "[*] joystick pluggedin %d %d \n", id->idVendor,
+  printk(KERN_INFO "[*] Generic joystick pluggedin %d %d \n", id->idVendor,
          id->idProduct);
 
   iface_desc = interface->cur_altsetting;
@@ -132,7 +129,7 @@ static int joystick_probe(struct usb_interface *interface,
 }
 
 static void joystick_disconnect(struct usb_interface *interface) {
-  printk(KERN_INFO "[*] joystick removed \n");
+  printk(KERN_INFO "[*] Generic joystick removed \n");
 }
 
 
@@ -146,18 +143,18 @@ static int __init pen_init(void) {
   }
 
   ret = -1;
-  printk(KERN_INFO "[*] registering driver for joystick with kernel");
+  printk(KERN_INFO "[*] Registering driver for joystick with kernel");
   ret = usb_register(&pen_driver);
-  printk(KERN_INFO "[*] registration is complete");
+  printk(KERN_INFO "[*] Registration is complete");
 
   return ret;
 }
 
 static void __exit pen_exit(void) {
-  printk(KERN_INFO "[*] unregistering joystick\n");
+  printk(KERN_INFO "[*] Unregistering joystick\n");
   usb_deregister(&pen_driver);
   netlink_kernel_release(nl_sk);
-  printk(KERN_INFO "[*] unregistering complete\n");
+  printk(KERN_INFO "[*] Unregistering complete\n");
 
 }
 
