@@ -16,6 +16,7 @@ void *my_buffer;
 static struct usb_interface *my_interface;
 static const struct usb_device_id *my_id;
 static int joystick_probe(struct usb_interface *, const struct usb_device_id *);
+static void joystick_disconnect(struct usb_interface *interface);
 
 struct controller {
   char xaxis;
@@ -27,17 +28,20 @@ struct controller {
   char b4;
 };
 
-static struct usb_driver pen_driver = {
-    .name = "Generic Joystick",
-    .id_table = joystick_table,
-    .probe = joystick_probe,
-    .disconnect = joystick_disco,
-};
 
 static struct usb_device_id joystick_table[] = {
 
     {USB_DEVICE(0x0583, 0xb03b)}, {},
 };
+
+
+static struct usb_driver pen_driver = {
+    .name = "Generic Joystick",
+    .id_table = joystick_table,
+    .probe = joystick_probe,
+    .disconnect = joystick_disconnect,
+};
+
 
 /* Protocol family, consistent in both kernel prog and user prog. */
 #define MYPROTO NETLINK_USERSOCK
@@ -93,7 +97,7 @@ void myHandler(struct urb *urb) {
 
 static struct usb_device *device;
 
-MODULE_DEVICE_TABLE(usb, pen_table);
+MODULE_DEVICE_TABLE(usb, joystick_table);
 
 static int joystick_probe(struct usb_interface *interface,
                      const struct usb_device_id *id) {
@@ -127,7 +131,7 @@ static int joystick_probe(struct usb_interface *interface,
   return 0;
 }
 
-static void joystick_disco(struct usb_interface *interface) {
+static void joystick_disconnect(struct usb_interface *interface) {
   printk(KERN_INFO "[*] joystick removed \n");
 }
 
