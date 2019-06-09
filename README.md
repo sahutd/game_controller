@@ -124,4 +124,8 @@ In this scenario, understanding the meaning of each action(and the corresspondin
 
 ![Bit pattern of game controller buffer](/bitpattern.jpeg)
 
+Each time a response is with us, it means the user did some action - moved the joystick or pressed a button. We need to take some action. But the kernel(device driver) is not the best place to take such action. The role of the device driver is just to talk to the hardware and the user space and nothing more.
+
+With this philosophy, we just pass on all user actions(button press/axis movement etc) to the user space
+
 # Communicating to user space
