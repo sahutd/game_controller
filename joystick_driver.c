@@ -19,13 +19,13 @@ static int joystick_probe(struct usb_interface *, const struct usb_device_id *);
 static void joystick_disconnect(struct usb_interface *interface);
 
 struct controller {
-  char xaxis;
-  char yaxis;
-  char updownaxis;
-  char b1;
-  char b2;
-  char b3;
-  char b4;
+  int xaxis;
+  int yaxis;
+  int updownaxis;
+  int b1;
+  int b2;
+  int b3;
+  int b4;
 };
 
 
@@ -50,14 +50,17 @@ static struct usb_driver pen_driver = {
 
 static struct sock *nl_sk = NULL;
 
-static void send_netlink_message(void) {
+static void send_netlink_message(struct controller* controller) {
   struct sk_buff *skb;
   struct nlmsghdr *nlh;
-  char *msg = "Hello from kernel";
-  int msg_size = strlen(msg) + 1;
+  char msg[50];
+  int msg_size;
   int res;
+  snprintf( msg, 50, "%d%d%d%d", controller->b1, controller->b2, controller->b3, controller->b4);
+  msg_size = strlen(msg) + 1;
 
-  pr_info("Creating skb.\n");
+
+
   skb = nlmsg_new(NLMSG_ALIGN(msg_size + 1), GFP_KERNEL);
   if (!skb) {
     pr_err("Allocation failure.\n");
@@ -69,10 +72,7 @@ static void send_netlink_message(void) {
 
   pr_info("Sending skb.\n");
   res = nlmsg_multicast(nl_sk, skb, 0, MYGRP, GFP_KERNEL);
-  if (res < 0)
-    pr_info("nlmsg_multicast() error: %d\n", res);
-  else
-    pr_info("Success.\n");
+
 }
 
 void myHandler(struct urb *urb) {
@@ -83,14 +83,14 @@ void myHandler(struct urb *urb) {
   controller.xaxis = buffer[0];
   controller.yaxis = buffer[1];
   controller.updownaxis = buffer[2];
-  controller.b1 = buffer[3];
-  controller.b2 = buffer[4];
-  controller.b3 = buffer[5];
-  controller.b4 = buffer[6];
+  controller.b1 = buffer[3] & 1 << 0 ? 1 : 0;
+  controller.b2 = buffer[3] & 1 << 1 ? 1 : 0;
+  controller.b3 = buffer[3] & 1 << 2 ? 1 : 0;
+  controller.b4 = buffer[3] & 1 << 3 ? 1 : 0;
 
-  if (controller.b1 + controller.b2 + controller.b3 + controller.b4 > 0) {
+  if (controller.b1 || controller.b2 || controller.b3 || controller.b4) {
 
-    send_netlink_message();
+    send_netlink_message(&controller);
   }
   usb_submit_urb(urb, GFP_ATOMIC);
 }

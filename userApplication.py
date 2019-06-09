@@ -8,8 +8,15 @@ sock = socket.socket(socket.AF_NETLINK, socket.SOCK_DGRAM, socket.NETLINK_USERSO
 sock.bind((0, 0))
 sock.setsockopt(270, 1, 31)
 
+def parse(string):
+
+	return ''.join([i for i in string.decode() if i.isalnum()])
+	
+
 while 1:
   try:
-    print(sock.recvfrom(1024))
-  except socket.error as e:
-    print ('Exception')
+    msg = sock.recvfrom(1024)[0]
+    new_msg = parse(msg)
+    print(new_msg)
+  except Exception as e:
+    print (e)
