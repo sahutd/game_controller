@@ -1,6 +1,7 @@
 import socket
 import os
 import time
+import string
 
 sock = socket.socket(socket.AF_NETLINK, socket.SOCK_DGRAM, socket.NETLINK_USERSOCK)
 
@@ -8,9 +9,11 @@ sock = socket.socket(socket.AF_NETLINK, socket.SOCK_DGRAM, socket.NETLINK_USERSO
 sock.bind((0, 0))
 sock.setsockopt(270, 1, 31)
 
+allowed = set(','+string.digits)
+
 def parse(string):
 
-	return ''.join([i for i in string.decode() if i.isalnum()])
+	return ''.join(s for s in string.decode() if s in allowed)
 	
 
 while 1:
@@ -19,4 +22,4 @@ while 1:
     new_msg = parse(msg)
     print(new_msg)
   except Exception as e:
-    print (e)
+    pass

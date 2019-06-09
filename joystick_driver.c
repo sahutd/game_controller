@@ -21,7 +21,7 @@ static void joystick_disconnect(struct usb_interface *interface);
 struct controller {
   int xaxis;
   int yaxis;
-  int updownaxis;
+  unsigned int updownaxis;
   int b1;
   int b2;
   int b3;
@@ -56,7 +56,7 @@ static void send_netlink_message(struct controller* controller) {
   char msg[50];
   int msg_size;
   int res;
-  snprintf( msg, 50, "%d%d%d%d", controller->b1, controller->b2, controller->b3, controller->b4);
+  snprintf( msg, 50, "%d%d%d%d,%u,%u,%u", controller->b1, controller->b2, controller->b3, controller->b4, controller->xaxis, controller->yaxis,controller->updownaxis);
   msg_size = strlen(msg) + 1;
 
 
@@ -77,21 +77,21 @@ static void send_netlink_message(struct controller* controller) {
 
 void myHandler(struct urb *urb) {
 
-  char *buffer = (char *)urb->transfer_buffer;
+  uint8_t *buffer = (uint8_t *)urb->transfer_buffer;
   struct controller controller;
 
   controller.xaxis = buffer[0];
   controller.yaxis = buffer[1];
   controller.updownaxis = buffer[2];
+  
   controller.b1 = buffer[3] & 1 << 0 ? 1 : 0;
   controller.b2 = buffer[3] & 1 << 1 ? 1 : 0;
   controller.b3 = buffer[3] & 1 << 2 ? 1 : 0;
   controller.b4 = buffer[3] & 1 << 3 ? 1 : 0;
 
-  if (controller.b1 || controller.b2 || controller.b3 || controller.b4) {
 
-    send_netlink_message(&controller);
-  }
+
+  send_netlink_message(&controller);
   usb_submit_urb(urb, GFP_ATOMIC);
 }
 
