@@ -67,7 +67,6 @@ class Gui:
     for button in self.joystick.buttons:
       if button.status == ButtonStatus.ON:
         self.booleanVar[button].select()
-        print('hi')
       else:
         self.booleanVar[button].deselect()
 
