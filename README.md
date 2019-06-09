@@ -129,3 +129,16 @@ Each time a response is with us, it means the user did some action - moved the j
 With this philosophy, we just pass on all user actions(button press/axis movement etc) to the user space
 
 # Communicating to user space
+
+There are many ways of communicating to the user space from the kernel. Some ways are using `procfs`, `sysfs`, `ioctl` or `debugfs`.
+
+They all have their own pros and cons.
+
+I decided to go with `netlink`
+
+## netlink
+
+In short, netlink is a socket based mechanism for communication between kernel and userspace. Conceptually, it exposes interface similar to TCP/UDP sockets. So development of senders/recievers is a breeze if you are familiar with socket programming
+
+You can take a look at `send_netlink_message` function in kernel driver and the sockets code in the user application for its simplicity
+
