@@ -142,3 +142,5 @@ In short, netlink is a socket based mechanism for communication between kernel a
 
 You can take a look at `send_netlink_message` function in kernel driver and the sockets code in the user application for its simplicity
 
+
+We are using `multicast` mode because multiple applications can be reading from our device.
