@@ -116,5 +116,12 @@ Once the URB request is submitted, and once the device responds, there is call m
 
 # Deciphering the meaning of USB signals
 
+At the device level, every action(button press or axis movement) is a pattern of bits. Whenever you peform this action, the USB device via the USB host controller places a bit pattern into the USB bus. It ultimately gets passed to the concerned device driver.
+
+Making sense of this bit pattern is trivial if you have access to the hardware manual. However in my case, I did not.
+
+In this scenario, understanding the meaning of each action(and the corressponding bit pattern) reduces to reverse engineering. You can use USB sniffing tools like USBPCap etc for this purpose. After much permutation and combination, I deciphered the following information about the device I had 
+
+![Bit pattern of game controller buffer](/bitpattern.jpeg)
 
 # Communicating to user space
