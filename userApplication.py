@@ -48,13 +48,16 @@ class Gui:
   def __init__(self, joystick):
     self.joystick = joystick
     
-    self.labelVars = {}
+    self.booleanVar = {}
     self.window = tkinter.Tk()
 
 
     for button in joystick.buttons:
-      self.labelVars[button] = tkinter.StringVar()
-      tkinter.Label(self.window, textvariable=self.labelVars[button]).pack()
+      self.booleanVar[button] = tkinter.Checkbutton(self.window, text='Button {}'.format(button.id_))
+      self.booleanVar[button].pack()
+
+
+      
     self.update()
   def run(self):
     self.window.mainloop()
@@ -63,10 +66,10 @@ class Gui:
   def update(self):
     for button in self.joystick.buttons:
       if button.status == ButtonStatus.ON:
-
-        self.labelVars[button].set('Button{}'.format(button.id_))
+        self.booleanVar[button].select()
+        print('hi')
       else:
-        self.labelVars[button].set('')
+        self.booleanVar[button].deselect()
 
 
 
@@ -92,10 +95,10 @@ class clientThread(threading.Thread):
       try:       
         msg = sock.recvfrom(1024)[0]
         new_msg = parse(msg)
-        joystick.update(msg)
-        gui.update()
+        self.joystick.update(new_msg)
       except Exception as e:
         print(e)
+      self.gui.update()
 
 if __name__ == '__main__':
   joystick = Joystick()
