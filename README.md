@@ -1,5 +1,10 @@
 # game_controller
+
+![Picture of game controller](/pictures/joystick.JPG)
+
 A linux device driver for a generic 3 axis 4 button game controller. Accompanied by a user space demo tool
+
+![User space application demo](/pictures/userapp.png)
 
 This project was done by me some time ago to understand how to write a device driver/module that runs in the kernel space in Linux.
 
@@ -21,10 +26,14 @@ This is done by the macro - macro_init(function pointer)
 
 The init The `module_init(function pointer)` macro causes the init function to be discarded and its memory freed once the init function finishes for built-in drivers. Here you can setup any resources for the driver(memory/counters etc)
 
+
+
 ## Function to handle driver unregistration
 
 This is what gets called when you unload a driver. This is registered with the macro `module_exit(function pointer)`
 You must free any resourcse that you set up in module_init here.
+
+
 
 ## Building a driver
 
@@ -43,12 +52,15 @@ sudo insmod <name of kernel object file (.ko extension of previous step)>
 
 Any PRINTK\alerts messages can be seen by using `dmesg -w`. This is because you cannot use `printf` family of functions while the code is running in the kernel
 
+![Driver registration kernel ALERT](/pictures/driverregister.JPG)
+
 ## Unloading a driver
 
 One can remove a loaded driver by 
 ```
 sudo rmmod <namke of driver>
 ```
+![Driver unregistration kernel alert](/pictures/deregisterdriver.JPG)
 
 This covers the bare minimums of driver registration/unregistration. Next we will look at how to react when the device of interest is plugged into system. Here were are dealing with a USB game controller
 
@@ -66,10 +78,12 @@ Now is a good time to read http://lmu.web.psi.ch/docu/manuals/software_manuals/l
 
 The function you regsiter for the probe gets called when the device gets plugged in. Here you can create device specific data structures. Difference between probe and init is that probe is device specific(if you attach two game controllers, probe gets called twice. Init gets called only once, when the *driver* is loaded)
 
+![Device connected message](/pictures/deviceplug.JPG)
 
 ## The disconnect
 This is called when you eject the device from your system. Free up any data structures that were associated with the device here.
 
+![Device unplugged message](/pictures/unplug.JPG)
 
 # Interacting with the device
 
