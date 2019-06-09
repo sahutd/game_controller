@@ -53,7 +53,7 @@ This covers the bare minimums of driver registration/unregistration. Next we wil
 
 
 ## The USB architecture
-Now is a good time to read http://www.embeddedlinux.org.cn/essentiallinuxdevicedrivers/final/ch11lev1sec1.html which provides a good idea about the USB architecture on Linux(USB is same everywhere!)
+Now is a good time to read http://lmu.web.psi.ch/docu/manuals/software_manuals/linux_sl/usb_linux_programming_guide.pdf which provides a good idea about the USB architecture on Linux(USB is same everywhere!)
 
 
 ## The probe
@@ -63,3 +63,58 @@ The function you regsiter for the probe gets called when the device gets plugged
 
 ## The disconnect
 This is called when you eject the device from your system. Free up any data structures that were associated with the device here.
+
+
+# Interacting with the device
+
+This is a really broad topic. Depending on nature of device, its interfaces(BULK/INTERRUPT/CONTROL/ISOCHRNOUS) you can do various things(like read/write). 
+This is accomplished using the data structure
+USB request block
+```
+struct urb
+{
+// (IN) device and pipe specify the endpoint queue
+      struct usb_device *dev;         // pointer to associated USB device
+      unsigned int pipe;              // endpoint information
+
+      unsigned int transfer_flags;    // URB_ISO_ASAP, URB_SHORT_NOT_OK, etc.
+
+// (IN) all urbs need completion routines
+      void *context;                  // context for completion routine
+      usb_complete_t complete;        // pointer to completion routine
+
+// (OUT) status after each completion
+      int status;                     // returned status
+
+// (IN) buffer used for data transfers
+      void *transfer_buffer;          // associated data buffer
+      u32 transfer_buffer_length;     // data buffer length
+      int number_of_packets;          // size of iso_frame_desc
+
+// (OUT) sometimes only part of CTRL/BULK/INTR transfer_buffer is used
+      u32 actual_length;              // actual data buffer length
+
+// (IN) setup stage for CTRL (pass a struct usb_ctrlrequest)
+      unsigned char *setup_packet;    // setup packet (control only)
+
+// Only for PERIODIC transfers (ISO, INTERRUPT)
+  // (IN/OUT) start_frame is set unless URB_ISO_ASAP isn't set
+      int start_frame;                // start frame
+      int interval;                   // polling interval
+
+  // ISO only: packets are only "best effort"; each can have errors
+      int error_count;                // number of errors
+      struct usb_iso_packet_descriptor iso_frame_desc[0];
+};
+```
+
+Read more at https://www.kernel.org/doc/html/latest/driver-api/usb/URB.html
+
+
+Once the URB request is submitted, and once the device responds, there is call made to the URB completion handler. In our case, we recieve the current inputs of the game controller
+
+
+# Deciphering the meaning of USB signals
+
+
+# Communicating to user space
