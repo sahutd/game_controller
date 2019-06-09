@@ -5,6 +5,12 @@ This project was done by me some time ago to understand how to write a device dr
 
 This readme is a summary of my understanding.
 
+Some helpful tools for this excerise are :
+`dmesg`
+`lsusb` 
+`usb-devices` - to find out vendor info/device info/interface/transfer length, endpoints information etc
+`lsmod`
+
 # The bare minimum driver skeleton
 
 
@@ -142,3 +148,5 @@ In short, netlink is a socket based mechanism for communication between kernel a
 
 You can take a look at `send_netlink_message` function in kernel driver and the sockets code in the user application for its simplicity
 
+
+We are using `multicast` mode because multiple applications can be reading from our device.
