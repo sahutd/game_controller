@@ -5,7 +5,7 @@ This project was done by me some time ago to understand how to write a device dr
 
 This readme is a summary of my understanding.
 
-
+# The bare minimum driver skeleton
 
 
 
@@ -45,3 +45,21 @@ sudo rmmod <namke of driver>
 ```
 
 This covers the bare minimums of driver registration/unregistration. Next we will look at how to react when the device of interest is plugged into system. Here were are dealing with a USB game controller
+
+
+
+# Handling device plugging and ejection
+
+
+
+## The USB architecture
+Now is a good time to read http://www.embeddedlinux.org.cn/essentiallinuxdevicedrivers/final/ch11lev1sec1.html which provides a good idea about the USB architecture on Linux(USB is same everywhere!)
+
+
+## The probe
+
+The function you regsiter for the probe gets called when the device gets plugged in. Here you can create device specific data structures. Difference between probe and init is that probe is device specific(if you attach two game controllers, probe gets called twice. Init gets called only once, when the *driver* is loaded)
+
+
+## The disconnect
+This is called when you eject the device from your system. Free up any data structures that were associated with the device here.
