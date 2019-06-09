@@ -5,6 +5,12 @@ This project was done by me some time ago to understand how to write a device dr
 
 This readme is a summary of my understanding.
 
+Some helpful tools for this excerise are :
+`dmesg`
+`lsusb` 
+`usb-devices` - to find out vendor info/device info/interface/transfer length, endpoints information etc
+`lsmod`
+
 # The bare minimum driver skeleton
 
 
