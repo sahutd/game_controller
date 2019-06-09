@@ -4,6 +4,7 @@ import time
 import string
 import enum
 import threading
+import tkinter
 
 BUTTONCOUNT = 4
 
@@ -39,17 +40,41 @@ class Joystick:
     for i, s in enumerate(buttonString):
         if s == '1':
           self.buttons[i].set()
-        else:
+        if s== '0':
           self.buttons[i].unset()
 
 
+class Gui:
+  def __init__(self, joystick):
+    self.joystick = joystick
+    
+    self.labelVars = {}
+    self.window = tkinter.Tk()
+
+
+    for button in joystick.buttons:
+      self.labelVars[button] = tkinter.StringVar()
+      tkinter.Label(self.window, textvariable=self.labelVars[button]).pack()
+    self.update()
+  def run(self):
+    self.window.mainloop()
+
+
+  def update(self):
+    for button in self.joystick.buttons:
+      if button.status == ButtonStatus.ON:
+
+        self.labelVars[button].set('Button{}'.format(button.id_))
+      else:
+        self.labelVars[button].set('')
 
 
 
 class clientThread(threading.Thread):
-  def __init__(self, joystick):
+  def __init__(self, joystick, gui):
     super().__init__()
     self.joystick = joystick
+    self.gui = gui
 
   def run(self):
     sock = socket.socket(socket.AF_NETLINK, socket.SOCK_DGRAM, socket.NETLINK_USERSOCK)
@@ -64,14 +89,22 @@ class clientThread(threading.Thread):
       
 
     while 1:
-      try:
+      try:       
         msg = sock.recvfrom(1024)[0]
         new_msg = parse(msg)
-        joystick.update(new_msg)
+        joystick.update(msg)
+        gui.update()
       except Exception as e:
-        pass
+        print(e)
 
 if __name__ == '__main__':
   joystick = Joystick()
-  thread = clientThread(joystick)
+  gui = Gui(joystick)
+  thread = clientThread(joystick, gui)
   thread.start()
+  gui.run()
+  
+
+
+
+  thread.join()
