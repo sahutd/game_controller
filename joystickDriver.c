@@ -67,17 +67,17 @@ static void send_netlink_message(void)
 void myHandler(struct urb* urb)
 {
     char* buffer = (char*)urb->transfer_buffer;
-    struct controller ontroller;
+    struct controller controller;
 
-    ontroller.xaxis = buffer[0];
-    ontroller.yaxis = buffer[1];
-    ontroller.updownaxis = buffer[2];
-    ontroller.b1 = buffer[3];
-    ontroller.b2 = buffer[4];
-    ontroller.b3 = buffer[5];
-    ontroller.b4 = buffer[6];
+    controller.xaxis = buffer[0];
+    controller.yaxis = buffer[1];
+    controller.updownaxis = buffer[2];
+    controller.b1 = buffer[3];
+    controller.b2 = buffer[4];
+    controller.b3 = buffer[5];
+    controller.b4 = buffer[6];
 
-    if (ontroller.b1 + ontroller.b2 + ontroller.b3 + ontroller.b4 > 0)
+    if (controller.b1 + controller.b2 + controller.b3 + controller.b4 > 0)
     {
         send_netlink_message();
     }
