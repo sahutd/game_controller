@@ -76,6 +76,7 @@ class Gui:
 
         self.booleanVar = {}
         self.window = tkinter.Tk()
+        self.window.title("Generic joystick user application")
         self.axesLabels = {}
         self.setupWidgets()
 
